@@ -5,16 +5,18 @@ import { BackwardComponent } from './backward/backward.component';
 import { DebugComponent } from './debug/debug.component';
 import { ForwardComponent } from './forward/forward.component';
 import { RefreshComponent } from './refresh/refresh.component';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import { HomeComponent } from '/Users/helwi/TP_Angular_mh2/modele-de-navigateur_mh2/src/app/components/home/home.component'
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { HomeComponent } from '/workspaces/modele-de-navigateur_mh2/src/app/components/home/home.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatToolbarModule, AddressComponent, BackwardComponent, DebugComponent, ForwardComponent, RefreshComponent, HomeComponent],
+  imports: [RouterOutlet, MatToolbarModule, AddressComponent, BackwardComponent, DebugComponent, ForwardComponent, RefreshComponent, HomeComponent, ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'browser-template';
 }
+export { HomeComponent };
+

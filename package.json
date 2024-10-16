@@ -11,7 +11,7 @@
     "start": "npm-run-all -p serve start:electron",
     "build": "ng build",
     "serve": "ng serve",
-    "start:electron": "wait-on tcp:4200 && electron . --serve",
+    "start:electron": "wait-on tcp:127.0.0.1:3000 && electron . --serve",
     "build:mac": "ng build --base-href ./ && electron-builder -m --publish=never",
     "build:win": "ng build --base-href ./ && electron-builder -w --publish=never",
     "build:linux": "ng build --base-href ./ && electron-builder -l --publish=never",

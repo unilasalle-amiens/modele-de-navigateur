@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { BrowserService } from '/Users/helwi/TP_Angular_mh2/modele-de-navigateur_mh2/src/app/browser.service';
+import { BrowserService } from '/workspaces/modele-de-navigateur_mh2/src/app/browser.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 @Component({
