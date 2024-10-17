@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild, OnInit } from '@angular/core';
 import { BrowserService } from '../browser.service';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
@@ -16,6 +16,7 @@ export class AddressComponent {
   @ViewChild('search') searchElement: ElementRef = new ElementRef({});
 
   public browserService = inject(BrowserService);
+  public currentUrl:String = ''; //variable de type string pour récupérer l'URL dans ngOnInit()
 
   onKeyDownEvent(e: any) {
     if (e.key === 'Escape') {
@@ -34,5 +35,15 @@ export class AddressComponent {
 
   goToPage(url: string) {
     this.browserService.goToPage(url);
+  }
+
+    //fonction ngOnInit permettant de réupérer l'URL courante
+  ngOnInit(): void {
+    if ((window as any).electronAPI){
+      (window as any).electronAPI.onUrlChanged((event:any,url:string)=>{
+        this.currentUrl = url;
+        this.searchElement.nativeElement.value=url;
+      });
+    }
   }
 }

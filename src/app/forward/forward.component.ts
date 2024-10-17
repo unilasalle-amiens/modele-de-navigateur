@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { BrowserService } from '../browser.service';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, OnInit, inject, ChangeDetectorRef } from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { BrowserService } from "../browser.service";
+
 
 @Component({
   selector: 'app-forward',

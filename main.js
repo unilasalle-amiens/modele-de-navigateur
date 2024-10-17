@@ -12,9 +12,9 @@ app.whenReady().then(() => {
     }
   });
 
-  if (app.isPackaged){
+  if (app.isPackaged) {
     win.loadFile('dist/browser-template/browser/index.html');
-  }else{
+  } else {
     win.loadURL('http://localhost:4200')
   }
 
@@ -23,13 +23,28 @@ app.whenReady().then(() => {
   const view = new WebContentsView();
   win.contentView.addChildView(view);
 
+  // Mise à jour de l'adresse web en 2 événements
+  //1. On récupère l'URL de la page web rendue
+  view.webContents.on('did-naviagte-in-page', (event, url) => {
+    console.log(`Navigation started to: ${url}`);
+    //Envoyer l'URL à la barre d'outils
+    win.webContents.send('url-changed',url);
+  });
+
+  view.webContents.on('did-stop-loading', () => {
+    const url = view.webContents.getURL();
+    console.log(`Navigation started to: ${url}`);
+    //2. Envoyer l'URL à la barre d'outils
+    win.webContents.send('url-changed',url);
+  });
+
   // Always fit the web rendering with the electron windows
   function fitViewToWin() {
     const winSize = win.webContents.getOwnerBrowserWindow().getBounds();
     view.setBounds({ x: 0, y: 55, width: winSize.width, height: winSize.height });
   }
 
-    win.webContents.openDevTools({ mode: 'detach' });
+  win.webContents.openDevTools({ mode: 'detach' });
 
   // Register events handling from the toolbar
   ipcMain.on('toogle-dev-tool', () => {
