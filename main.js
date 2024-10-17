@@ -31,10 +31,11 @@ app.whenReady().then(() => {
     win.webContents.send('url-changed',url);
   });
 
+  //2. Mise à jour de l'URL dans la barre d'outils
   view.webContents.on('did-stop-loading', () => {
     const url = view.webContents.getURL();
     console.log(`Navigation started to: ${url}`);
-    //2. Envoyer l'URL à la barre d'outils
+    //Envoyer l'URL à la barre d'outils
     win.webContents.send('url-changed',url);
   });
 
