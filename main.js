@@ -1,5 +1,6 @@
 const { app, WebContentsView, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
+const axios = require('axios');
 
 app.whenReady().then(() => {
 
@@ -28,7 +29,7 @@ app.whenReady().then(() => {
   view.webContents.on('did-naviagte-in-page', (event, url) => {
     console.log(`Navigation started to: ${url}`);
     //Envoyer l'URL à la barre d'outils
-    win.webContents.send('url-changed',url);
+    win.webContents.send('url-changed', url);
   });
 
   //2. Mise à jour de l'URL dans la barre d'outils
@@ -36,7 +37,7 @@ app.whenReady().then(() => {
     const url = view.webContents.getURL();
     console.log(`Navigation started to: ${url}`);
     //Envoyer l'URL à la barre d'outils
-    win.webContents.send('url-changed',url);
+    win.webContents.send('url-changed', url);
   });
 
   // Always fit the web rendering with the electron windows
@@ -76,9 +77,50 @@ app.whenReady().then(() => {
     view.webContents.reload();
   });
 
-  ipcMain.handle('go-to-page', (event, url) => {
+  /*ipcMain.handle('go-to-page', (event, url) => {
     return view.webContents.loadURL(url);
+  });*/
+
+  ipcMain.handle('go-to-page', (event, siteUrl) => {
+    const urlWithoutProtocol = siteUrl.replace(/(^\w+:|^)\/\//, ''); // Suppression du protocole (http/https)
+
+    const httpsUrl = `https://${urlWithoutProtocol}`;
+
+    return checkUrl(httpsUrl) // Test HTTPS
+      .then(() => {
+        return view.webContents.loadURL(httpsUrl); // Si HTTPS fonctionne, retourner cette URL
+      })
+      .catch(() => {
+        const httpUrl = `http://${urlWithoutProtocol}`;
+        return checkUrl(httpUrl) // Si HTTPS échoue, tester HTTP
+          .then(() => {
+            return view.webContents.loadURL(httpUrl); // Si HTTP fonctionne, retourner cette URL
+          })
+          .catch(() => {
+            throw new Error(`Le site ${siteUrl} n'est pas accessible via HTTP ni HTTPS`);
+          });
+      });
   });
+
+  function checkUrl(url) {
+    console.log(`Vérification de l'URL : ${url}`);
+    return axios.get(url, {
+      timeout: 5000, // Timeout de 5 secondes
+      maxRedirects: 5, // Limite le nombre de redirections à suivre
+      validateStatus: function (status) {
+        return status >= 200 && status < 300; // Accepter les réponses entre 200 et 299
+      },
+    })
+      .then((response) => {
+        console.log(`Réponse reçue pour ${url} : ${response.status}`);
+        return true;
+      })
+      .catch((error) => {
+        console.error(`Erreur lors de la vérification de l'URL : ${error.message}`);
+        throw new Error(`Échec de la connexion à ${url}: ${error.message}`);
+      });
+  }
+
 
 
   ipcMain.handle('current-url', () => {
